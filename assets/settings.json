@@ -1,0 +1,94 @@
+{
+    "python_exe": "python",
+
+    "terminal": { 
+        "gui"     : true, 
+        "virtual" : true
+    },
+    
+    "uvicorn": { 
+        "host":    "0.0.0.0", 
+        "port":    8000,
+        "workers": 2
+    },
+
+    "MQTT_client": {
+        "net_autostart": false,      
+        "debug"        : false,  
+        "broker"       : "broker.emqx.io",
+        "port"         : 1883,
+        "keepalive"    : 60,
+        "topics"       : [
+            ["home/sensor/temperature", 0]
+        ]
+    
+    },
+
+    "MQTT_broker":{
+        "net_autostart": false,      
+        "debug"        : false,  
+
+        "settings" : {
+            "listeners": {
+                "default": {
+                    "type": "tcp",
+                    "bind": "0.0.0.0:1883"
+                }
+            }
+        }
+    },
+
+    "BACnet_server": {
+        "net_autostart"  : false,
+        "debug"          : false,
+        "whois_autostart": true,
+
+        "task_mng_sleep" : 0.1,
+
+        "bip_ip"         : "192.168.1.16",
+        "bip_mask"       : "255.255.255.0",
+        "bip_port"       : 47810,
+        
+        
+
+        "server": [[
+            {
+                "apdu-segment-timeout"          : 1000,
+                "apdu-timeout"                  : 3000,
+                "application-software-version"  : "1.0",
+                "database-revision"             : 1,
+                "firmware-revision"             : "N\/A",
+                "max-apdu-length-accepted"      : 1024,
+                "model-name"                    : "N\/A",
+                "number-of-apdu-retries"        : 3,
+                "object-identifier"             : "device,99999",
+                "object-name"                   : "ADPIO EDGE",
+                "object-type"                   : "device",
+                "protocol-revision"             : 22,
+                "protocol-version"              : 1,
+                "segmentation-supported"        : "segmented-both",
+                "system-status"                 : "operational",
+                "vendor-identifier"             : 999,
+                "vendor-name"                   : "BACpypes"
+            }, {
+                "bacnet-ip-mode"                : "normal",
+                "bacnet-ip-udp-port"            : -1,
+                "changes-pending"               : false,
+                "ip-address"                    : "XXX.XXX.XXX.XXX",
+                "ip-subnet-mask"                : "XXX.XXX.XXX.XXX",
+                "link-speed"                    : 0.0,
+                "mac-address"                   : "XXX.XXX.XXX.XXX:XXXXX",
+                "network-number"                : 100,
+                "network-number-quality"        : "configured",
+                "network-type"                  : "ipv4",
+                "object-identifier"             : "network-port,1",
+                "object-name"                   : "NetworkPort-1",
+                "object-type"                   : "network-port",
+                "out-of-service"                : false,
+                "protocol-level"                : "bacnet-application",
+                "reliability"                   : "no-fault-detected"
+            }
+        ]]
+    }
+
+}

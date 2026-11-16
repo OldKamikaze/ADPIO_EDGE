@@ -1,0 +1,180 @@
+import ujson
+import os
+import sys
+from   pathlib import Path
+
+from shutil import rmtree, copytree, copyfile
+from glob import glob
+
+#settings
+from lib.globals     import WORKSPACE, ROOT_FOLDER
+from content.logger     import print_log_system
+
+#Db
+from lib.database_sql.workspace_model import workspace_db, logic_palette_rec
+
+from content.users                import check_permissions
+
+
+def sort_by_order(rec):
+    return rec["order"]
+
+    
+async def rebuild_logic_db(content):   
+    try:
+        #if sys.platform == "win32":  file_list = glob('.\\lib\\lib_embed\\*.py') 
+        #else:                        
+        file_list = glob('./lib/lib_embed/*.py') 
+        print("File List: " + str(file_list))
+        
+        block_db = []
+
+        for file in file_list: 
+            print('\nScanning: ' + file)
+
+            if sys.platform == "win32": imortloc = str(file).replace('.\\lib\\', '').replace('.py', '').replace('\\', '.')
+            else:                       imortloc = str(file).replace('./lib/', '').replace('.py', '').replace('/', '.')
+            
+            filename = str(imortloc).split(".")[-1]
+            
+            print("Import Location: " + imortloc)
+            
+            group = {}
+            with open(str(file)) as f:
+                for line in f.readlines():
+                    if '#GROUP=' in line:
+                        group = ujson.loads(line.replace('#GROUP=', '').strip())
+                        group['blocks'] = []
+                    if '#BLOCK=' in line:
+                        group['blocks'].append( ujson.loads(line.replace('#BLOCK=', '').strip()) )
+                        group['blocks'][-1]['io'] = []
+                    if '#IO=' in line:
+                        group['blocks'][-1]['io'].append( ujson.loads(line.replace('#IO=', '').strip()) )    
+                    if ('def ' + filename + '_') in line:
+                        group['blocks'][-1]['function'] = line.replace('def ', '').replace(':', '').strip()
+                        func_name                       = group['blocks'][-1]['function'].split('(')[0]
+                        group['blocks'][-1]['import']   = "".join([ 'from ' , imortloc , ' import ' , func_name ])
+                        group['blocks'][-1]['id']       = func_name
+                
+            block_db.append(group)
+
+        #Sort By group order
+        block_db.sort(key=sort_by_order)
+            
+        await workspace_db.delete_all_records(logic_palette_rec) #clear table for rebuild        
+
+        print('\n')    
+        logic_list = []
+
+        for group in block_db:
+            grp_name = group['name']
+            print(str(group['name']))
+
+            for block in group['blocks']:
+                logic_list.append(logic_palette_rec(
+                    id          = block['id'], 
+                    name        = block['name'], 
+                    description = block['description'], 
+                    group       = grp_name,
+                    libimport   = block['import'],
+                    type        = block['type'],
+                    function    = block['function'],
+                    io          = block['io'],
+                ))
+
+        await workspace_db.add_records(logic_list)
+
+        #Copy Files To Workfolder
+        src_folder = f"{ROOT_FOLDER}{Path('/lib/lib_embed')}"  
+        dst_folder = f"{WORKSPACE}{Path('/lib_embed')}"    
+
+        if os.path.exists(dst_folder):
+            rmtree(dst_folder)
+        
+        copytree(src_folder, dst_folder)
+
+        #Clear lib folder
+        if os.path.exists(f"{WORKSPACE}{Path('/lib')}"):
+            rmtree(f"{WORKSPACE}{Path('/lib')}")
+
+        #Copy DB Driver
+        src_folder = f"{ROOT_FOLDER}{Path('/lib/database_sql')}" 
+        dst_folder = f"{WORKSPACE}{Path('/lib/database_sql')}"   
+        copytree(src_folder, dst_folder)
+        
+        #Copy Dataconversion
+        src_folder = f"{ROOT_FOLDER}{Path('/lib/dataconversion.py')}"
+        dst_folder = f"{WORKSPACE}{Path('/lib/dataconversion.py')}"  
+        copyfile(src_folder, dst_folder)      
+
+        #Copy Terminal
+        src_folder = f"{ROOT_FOLDER}{Path('/lib/terminal.py')}"
+        dst_folder = f"{WORKSPACE}{Path('/lib/terminal.py')}"  
+        copyfile(src_folder, dst_folder)
+
+        #Copy Globals
+        src_folder = f"{ROOT_FOLDER}{Path('/lib/globals.py')}"
+        dst_folder = f"{WORKSPACE}{Path('/lib/globals.py')}"  
+        copyfile(src_folder, dst_folder)
+
+        await print_log_system('Logic DB rebuilt sucessfully!')        
+
+        return await update_logic(content)
+    except Exception as ex:
+        print("Failed To Rebuild: " + str(ex))
+        return  {"result": "error", "error_text": "Failed To Rebuild Logic DB"}
+
+
+async def update_logic(content):
+    try:
+        return await workspace_db.get_all_records(logic_palette_rec, to_json=True)
+    except  Exception as ex:
+        print(str(ex))
+        return  {"result": "error", "error_text": f"Failed ro get logic palette... ({ex})"}
+
+
+async def update_logic_grouped(content):
+    list = await update_logic(content)#.sort(key=sort_by_order)
+    
+    new_grp = ''
+    groups = []
+
+    for blk in list:
+        if blk['group'] != new_grp:
+            new_grp = blk['group']
+            groups.append({ "name": new_grp, "list": []})
+        
+        groups[-1]['list'].append(blk)
+
+    return groups
+
+
+async def get_block(content):
+    try:
+        return await workspace_db.get_record(logic_palette_rec, logic_palette_rec.id, content['id'])        
+    except Exception as ex:
+        print("Failed To Find Block In Palette: " + str(ex))
+        return None
+
+
+COMMANDS_DICT = {
+    'update_logic'             : update_logic               , 'perm_update_logic'              : 'developer, ',
+    'rebuild_logic_db'         : rebuild_logic_db           , 'perm_rebuild_logic_db'          : 'developer, ',
+    'update_logic_grouped'     : update_logic_grouped       , 'perm_update_logic_grouped'      : 'developer, ',
+    'get_block'                : get_block                  , 'perm_get_block'      : 'developer, ',
+}
+
+
+#DEFAULT
+async def default_msg(content):
+    print('Request Error system_tools: ' + str(content))
+    return {"result": "error", "error_text": "system_tools command not found"}
+
+
+async def system_tools_mng(auth, cmd, content):
+    content_json = ujson.loads( content )
+
+    if check_permissions(auth, COMMANDS_DICT['perm_' + cmd]):
+        return await COMMANDS_DICT.get(cmd, default_msg)(content_json)
+    else:
+        return { "result": "error", "error_text": f"Permission denied for user '{auth['user']}' accessing '{cmd}'" }

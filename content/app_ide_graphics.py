@@ -1,0 +1,101 @@
+import ujson
+
+#DB
+from lib.database_sql.application_model import graphics_rec, find_application_db, application_rec
+
+from content.users import check_permissions
+
+
+async def update(app_db, content):
+    try:
+        return await app_db.get_records(graphics_rec, graphics_rec.view, content['view'], to_json=True, order_by_asc=graphics_rec.order)
+    except Exception as ex:
+        print(str(ex))
+        return  {"result": "error", "error_text": f"Failed to obtain graphics: {ex}"}    
+
+
+async def add_element(app_db, content):
+    try:
+        await app_db.add_record( graphics_rec(
+            order           = content['element']['order'],
+            view            = content['element']['view'],
+            datapoint_bind  = content['element']['datapoint_bind'],
+        ))                 
+
+        return await app_db.get_records(graphics_rec, graphics_rec.view, content['view'], to_json=True, order_by_asc=graphics_rec.order)     
+    except Exception as ex:
+        print(str(ex))
+        return  {"result": "error", "error_text": f"Failed to add graphical element: {ex}"} 
+
+
+async def delete_element(app_db, content):
+    try:
+        await app_db.delete_records(
+            graphics_rec, graphics_rec.id, 
+            [rec['id'] for rec in content["elements"]]
+        )
+
+        return await app_db.get_records(graphics_rec, graphics_rec.view, content['view'], to_json=True, order_by_asc=graphics_rec.order)
+    except Exception as ex:
+        print(str(ex))
+        return  {"result": "error", "error_text": f"Failed to delete graphical element: {ex}"}            
+
+
+async def clear_view_elements(app_db, content):
+    try:
+        await app_db.delete_records_recursively(graphics_rec, graphics_rec.view, content['view'])
+        return  {"result": "ok"}
+    except Exception as ex:
+        print(str(ex))
+        return  {"result": "error", "error_text": f"Failed to clear all view graphical elements {ex}"}                  
+
+
+async def move_element(app_db, content):
+    try:
+        await app_db.update_multi_fields(
+            graphics_rec, graphics_rec.id, 'id',
+            [ {'id': rec['id'], 'order': rec['place']} for rec in content["elements"] ]
+        )
+
+        return await app_db.get_records(graphics_rec, graphics_rec.view, content['view'], to_json=True, order_by_asc=graphics_rec.order)
+    except Exception as ex:
+        return  {"result": "error", "error_text": f"Failed to move graphical element {ex}"}                       
+
+
+async def reorder_graphics(app_id):
+    db: application_rec = find_application_db(app_id)
+    widgets = await db.get_all_records(graphics_rec, order_by_asc=graphics_rec.order)
+
+    new_order = 0.0
+    wg_list   = []
+    for wg in widgets:
+        wg_list.append({'id': wg.id, 'order': new_order})
+        new_order += 1.0
+
+    await db.update_multi_fields(
+        graphics_rec, graphics_rec.id, 'id',
+        wg_list
+    )
+
+
+COMMANDS_DICT = {
+    'update'             : update               , 'perm_update'              : 'developer, user, view, ',
+    'add_element'        : add_element          , 'perm_add_element'         : 'developer, ',
+    'delete_element'     : delete_element       , 'perm_delete_element'      : 'developer, ',
+    'clear_view_elements': clear_view_elements  , 'perm_clear_view_elements' : 'developer, ',
+    'move_element'       : move_element         , 'perm_move_element'        : 'developer, ',
+}
+
+#DEFAULT
+async def default_msg(content):
+    print('Request Error app_ide_graphics_mng: ' + str(content))
+    return {"result": "error", "error_text": "app_ide_graphics_mng command not found"}
+
+async def app_ide_graphics_mng(auth, cmd, content):
+    content_json = ujson.loads( content )
+    app_db: application_rec = find_application_db(content_json["app_id"])
+
+    if check_permissions(auth, COMMANDS_DICT['perm_' + cmd]):
+        return await COMMANDS_DICT.get(cmd, default_msg)(app_db, content_json)
+    else:
+        return { "result": "error", "error_text": f"Permission denied for user '{auth['user']}' accessing '{cmd}'" }
