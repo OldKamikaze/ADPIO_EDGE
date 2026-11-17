@@ -1,12 +1,7 @@
-import sys
-import os
 import asyncio
-from   pathlib import Path
 
 #if sys.platform == 'win32':
 #    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy()) #otherwise create_subprocess_exec does not work on
-
-sys.path.append( f'{os.getcwd()}{Path('/ext_lib/')}' ) #External Libraries
 
 import uvicorn
 from   pydantic import BaseModel
@@ -61,8 +56,6 @@ worker      = -1
 
 
 async def on_server_startup(database_lib_rebuild = True):
-    #global loraWAN_serv, bacnet_serv
-
     #Check If Workspace properly initialized
     if database_lib_rebuild or __debug__:
         print("\n\nFirst DB Initialization, Auto Rebuild Mode On\n\n")
@@ -177,15 +170,6 @@ app.add_middleware(
     compresslevel = 6
 )
 
-#SVELTE KIT DEV
-#app.add_middleware(
-#    CORSMiddleware,
-#    allow_origins    = ["http://127.0.0.1:5173"],
-#    allow_credentials= True,
-#    allow_methods    = ["*"],
-#    allow_headers    = ["*"],
-#)
-
 class request_jsn(BaseModel): #for standart commands, update, delete record and etc
     cmd:     str = 'command'
     #user:    str = ''
@@ -205,15 +189,6 @@ def check_auth(sessionid):
 
     #return {"result": "ok", "auth": True}
     return { "result": "error", "auth": False, "error_text": "The Username or Password is Incorrect" }
-
-
-#@app.get("/",           response_class=HTMLResponse)
-#@app.get("/index.html", response_class=HTMLResponse)
-#async def get_index():
-#    return INDEX
-
-#https://fastapi.tiangolo.com/advanced/security/http-basic-auth/
-#async def login(authed: Annotated[str, Depends(get_current_username)], req_json: request_jsn): #, request: Request
 
 
 @app.post("/api/login")

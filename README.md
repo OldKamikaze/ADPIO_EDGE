@@ -9,7 +9,8 @@ Build around main fundamentals:
 3. GUI builder.
 4. Data visualization, including trend engine
 
-At this moment works on linux only. 
+## Linux only support, Windows support comming soon.
+## BACnet And MQTT - read only, write mode comming soon.
 
 Dependencies for Python:
 ```

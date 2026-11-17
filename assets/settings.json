@@ -20,8 +20,7 @@
         "keepalive"    : 60,
         "topics"       : [
             ["home/sensor/temperature", 0]
-        ]
-    
+        ]    
     },
 
     "MQTT_broker":{
@@ -48,8 +47,6 @@
         "bip_ip"         : "192.168.1.16",
         "bip_mask"       : "255.255.255.0",
         "bip_port"       : 47810,
-        
-        
 
         "server": [[
             {

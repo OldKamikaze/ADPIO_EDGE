@@ -3,14 +3,13 @@ import ujson
 import asyncio
 from   datetime import datetime
 
-from drivers.drivers_tools import connect_id_gen, connect_id_gen_jsn
+from drivers.drivers_tools import connect_id_gen
 
-from amqtt.broker import Broker, CancelledError
+from amqtt.broker import Broker
 
 from dataclasses import dataclass
 from amqtt.plugins.base import BasePlugin
-from amqtt.plugins.manager import BaseContext
-from amqtt.session import ApplicationMessage, Session
+from amqtt.session import ApplicationMessage
 from amqtt.plugins.base import BasePlugin
  
 from content.logger    import print_log_mqtt

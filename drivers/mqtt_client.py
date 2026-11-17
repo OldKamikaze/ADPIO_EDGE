@@ -3,7 +3,7 @@ import ujson
 import asyncio
 from   datetime import datetime
 
-from drivers.drivers_tools import connect_id_gen, connect_id_gen_jsn
+from drivers.drivers_tools import connect_id_gen
 
 #required dacite and transitions
 from amqtt.client import MQTTClient, ClientError

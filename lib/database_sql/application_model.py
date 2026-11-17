@@ -6,8 +6,8 @@ from sqlalchemy.orm  import registry
 from sqlmodel        import Field, SQLModel, JSON, Column
 from lib.database_sql.sqlmodel_driver import engine_db
 
-from lib.globals import WORKSPACE, APPS_FOLDER
-from lib.dataconversion import  str_to_dp
+from lib.globals        import APPS_FOLDER
+from lib.dataconversion import str_to_dp
 
 from lib.database_sql.workspace_model import workspace_db, application_rec
 

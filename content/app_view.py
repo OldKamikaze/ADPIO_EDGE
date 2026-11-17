@@ -1,6 +1,6 @@
 import ujson
 
-from lib.database_sql.server_virt_model import set_server_param, get_server_param, get_data_run, set_data_run, get_data_run_multi, set_data_run_multi
+from lib.database_sql.server_virt_model import get_data_run_multi, set_data_run_multi
 
 from content.users import check_permissions
 

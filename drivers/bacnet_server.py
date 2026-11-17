@@ -1,27 +1,16 @@
 import threading
-import ujson
 import asyncio
 from   datetime import datetime
 
-from content.logger         import print_log_bacnet
-from drivers.drivers_tools import connect_id_gen, connect_id_gen_jsn, connect_id_decode
+from content.logger        import print_log_bacnet
+from drivers.drivers_tools import connect_id_gen, connect_id_decode
 
 from lib.database_sql.server_virt_model import server_virt_db, connector_rec, connector_task
 
-from bacpypes3.debugging import bacpypes_debugging, ModuleLogger
-from bacpypes3.argparse import SimpleArgumentParser
 from bacpypes3.app import Application
-from bacpypes3.pdu import Address, LocalBroadcast, RemoteBroadcast, GlobalBroadcast
-from bacpypes3.primitivedata import Unsigned, ObjectIdentifier, PropertyIdentifier
-from bacpypes3.errors import MissingRequiredParameter
-from bacpypes3.constructeddata import AnyAtomic
+from bacpypes3.pdu import Address
+from bacpypes3.primitivedata import ObjectIdentifier, PropertyIdentifier
 from bacpypes3.apdu import ErrorRejectAbortNack
-
-#import bacpypes3.object import AnalogValueObject
-#import bacpypes3.object as _client_object
-
-#from bacpypes3.object        import Object as _client_object
-#from bacpypes3.local.object  import Object as _server_object
 
 
 class device_properties:
@@ -144,13 +133,6 @@ class bacnet_server():
             
         return None
 
-
-    #async def add_task(self, cmd, params):
-    #    self.tasks.append({'cmd': cmd, 'params': params})
-
-
-    #async def add_tasks(self, cmds):
-    #    self.tasks.extend(cmds) #add list [{cmd, params}, ...]
 
     async def clear_db(self, params):
         await server_virt_db.delete_records_recursively(connector_task, connector_task.src, self.src)

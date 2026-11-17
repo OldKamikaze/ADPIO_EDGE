@@ -1,10 +1,8 @@
 import ujson
 
-from lib.database_sql.workspace_model import workspace_db, logs_rec, workspace_model
+from lib.database_sql.workspace_model import workspace_db, logs_rec
 from lib.terminal                     import terminal_rec, terminal_web
 from content.users import check_permissions
-from datetime import datetime
-
 
 __MAX_LEN = 2044
 

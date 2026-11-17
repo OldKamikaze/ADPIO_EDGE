@@ -1,25 +1,20 @@
 import asyncio
 import os
-import sys
 from pathlib import Path
 
 from py_compile             import compile
 from system.settings_server import settings_cfg
 from lib.globals            import ROOT_FOLDER, WORKSPACE, APPS_FOLDER
 
-from drivers.drivers_tools import connect_id_gen, connect_id_gen_jsn, connect_id_decode_jsn
+from drivers.drivers_tools import connect_id_decode_jsn
 
 from content.app_ide_datapoints import load_datapoints
 from content.app_ide_graphics   import reorder_graphics
 from content.app_ide_logic      import load_blocks #save_bind_alloc
-#from lib.dataconversion         import set_mem_value, get_mem, get_binds
-
-#from drivers.loraWAN_conn_sever import add_app_loraWAN_sync, free_app_loraWAN_sync
-#from drivers.bacnet_server      import add_app_BACnet_sync, free_app_BACnet_sync
 
 from content.logger import print_app_event
-from lib.database_sql.application_model import datapoints_rec, logic_rec, trend_rec
-from lib.database_sql.server_virt_model import server_virt_db, clear_virtual_db, init_virtual_db, set_server_param, get_server_param, get_data_run, set_data_run, datapoints_runtime_rec, SERVER_PARAMS, SERVER_STATUS_SIGNALS
+from lib.database_sql.application_model import datapoints_rec, logic_rec
+from lib.database_sql.server_virt_model import set_data_run
 
 from content.app_view import app_status
 
@@ -372,19 +367,6 @@ async def run_app(app):
 
     await asyncio.sleep(2) #without it app may be not init correctly not elegant
 
-    #Register DP Mapping in drivers
-    #dp = await load_datapoints(app)
-
-    #FIX it
-
-    #LoRaWAN
-    #bind_count = add_app_loraWAN_sync(app, dp)
-    #print(f'LoRaWAN Data Binded: {bind_count} / ({len(dp)})')
-
-    #BACnet
-    #bind_count = await add_app_BACnet_sync(app, dp)
-    #print(f'BACnet Data Binded: {bind_count} / ({len(dp)})')
-
     print(f'>>>> {app} Ready <<<<')
 
     return { 'result': 'ok' }, 
@@ -396,14 +378,6 @@ async def get_app_status(app_id):
 
 async def stop_app(app_id):
     print(f'>>>> Terminating {app_id} <<<< ')
-
-    #FIX it
-    
-    #bind_count = free_app_loraWAN_sync(app)
-    #print(f'LoRaWAN Bindings Cleared: {bind_count}')
-
-    #bind_count = free_app_BACnet_sync(app)
-    #print(f'BACnet Bindings Cleared: {bind_count}')
 
     await set_data_run(f"#{app_id}_status#", False)
     await print_app_event(f'>>>> {app_id} Stopped <<<<')

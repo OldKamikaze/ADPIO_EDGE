@@ -1,5 +1,5 @@
 from system.settings_server import settings_cfg
-from lib.database_sql.server_virt_model import server_virt_db, connector_rec, connector_task
+from lib.database_sql.server_virt_model import server_virt_db, connector_task
 
 #Drivers
 from drivers.bacnet_server         import bacnet_server
@@ -37,10 +37,6 @@ async def ce_initialize():
     if settings.mqtt_broker_server['net_autostart']:
         mqtt_broker_serv = mqtt_broker() 
         await mqtt_broker_serv.init_service( settings.mqtt_broker_server )
-
-
-    #Test task
-    #await ce_add_task(CE_SRC.BACnet_IP, 'test', {"msg": "test bacnet msg"})
 
 
 async def ce_terminate():
