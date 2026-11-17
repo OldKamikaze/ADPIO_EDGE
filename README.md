@@ -4,13 +4,14 @@
 
 
 Build around main fundamentals: 
-1. Datapoint agregation and integration
+1. Datapoints aggregation and integration
 2. Flow based programming
 3. GUI builder.
 4. Data visualization, including trend engine
 
-## Linux only support, Windows support comming soon.
-## BACnet And MQTT - read only, write mode comming soon.
+## Current Major Issues 
+1. Linux only support, Windows support coming soon.
+2. BACnet And MQTT - read only, write mode coming soon.
 
 Dependencies for Python:
 ```
