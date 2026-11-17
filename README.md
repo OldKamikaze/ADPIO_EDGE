@@ -7,7 +7,7 @@ Build around main fundamentals:
 1. Datapoint agregation and integration
 2. Flow based programming
 3. GUI builder.
-4. Data Visulisation including trend engine
+4. Data visualization, including trend engine
 
 At this moment works on linux only. 
 
