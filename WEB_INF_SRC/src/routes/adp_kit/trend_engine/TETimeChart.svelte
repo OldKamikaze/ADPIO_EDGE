@@ -1,6 +1,6 @@
 <script  lang="ts">
     import { onMount }      from 'svelte'
-    import { version, dev } from '$app/env';
+    import { dev } from '$app/env';
 
     import Modal           from '../../adp_kit/components/Modal.svelte'
 

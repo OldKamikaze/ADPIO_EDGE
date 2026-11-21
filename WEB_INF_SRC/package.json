@@ -1,7 +1,7 @@
 {
 	"name": "web-inf-src",
 	"private": true,
-    "version": "0.62a",
+    "version": "0.1",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",

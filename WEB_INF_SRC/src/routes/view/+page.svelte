@@ -4,22 +4,16 @@
 
     import { onMount, onDestroy }   from 'svelte'
     import { page }                 from '$app/state'
-    import { browser_params, user, async_get, async_post, get_cookie_value, initialize_user, popup_add, sleep } from '../state.svelte.ts'
-    import { build_app, run_app, stop_app, DATAPOINTS_PROPERTIES, UNITS_LIST} from '../../lib/app_engine.ts'
+    import { user, async_post }     from '../state.svelte.ts'
     
     import {
-        Add,
-        TrashCan,
-        Save,
         Edit,
     } from "carbon-icons-svelte"
 
 
-    import ContextMenu      from "../adp_kit/components/ContextMenu.svelte"
     import InputSelector    from "../adp_kit/components/InputSelector.svelte" 
     import ButtonR          from "../adp_kit/components/ButtonR.svelte"
     import Modal            from "../adp_kit/components/Modal.svelte"
-    import InputLabel       from "../adp_kit/components/InputLabel.svelte"
     import DataDisplay      from "../adp_kit/components/DataDisplay.svelte"
 
 

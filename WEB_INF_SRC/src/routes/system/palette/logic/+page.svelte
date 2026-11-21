@@ -1,7 +1,7 @@
 
 <script lang="ts">
-    import { onMount }      from 'svelte'
-    import { browser_params, user, async_get, async_post, get_cookie_value, initialize_user } from '../../../state.svelte.ts';
+    import { onMount }          from 'svelte'
+    import { user, async_post } from '../../../state.svelte.ts';
 
     import DataTableEdit from "../../../adp_kit/components/DataTableEdit.svelte"
     import Modal         from "../../../adp_kit/components/Modal.svelte"

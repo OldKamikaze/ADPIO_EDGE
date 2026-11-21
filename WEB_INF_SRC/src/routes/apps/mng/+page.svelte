@@ -1,21 +1,8 @@
 
 <script lang="ts">
     import { onMount }      from 'svelte'
-    import { browser_params, user, async_get, async_post, get_cookie_value, initialize_user, popup_add, sleep, set_navigation } from '../../state.svelte.ts'
+    import { user, async_post, popup_add, sleep, set_navigation } from '../../state.svelte.ts'
     import { build_app, run_app, stop_app } from '../../../lib/app_engine.ts'
-
-//    import { 
-//        set_navigation,
-//        find_button_index,
-//        sleep,
-//        popup_add,
-//    } from "../../stores"
-//
-//    import {
-//        build_app,
-//        run_app,
-//        stop_app
-//    } from "../../app_engine"
 
     import {
         Add,
@@ -29,8 +16,6 @@
         Play,
         Stop,
         Save,
-        Key,
-        AiEnabledEdt,
     } from "carbon-icons-svelte"
 
 

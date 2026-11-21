@@ -1,9 +1,9 @@
 
 <script lang="ts">
     import { onMount }      from 'svelte'
-    import { browser_params, user, async_get, async_post, get_cookie_value, initialize_user } from '../../state.svelte.ts';
+    import { user, async_post } from '../../state.svelte.ts';
 
-    let { children } = $props();
+    let { } = $props();
 
     import Modal            from '../../adp_kit/components/Modal.svelte'
     import ButtonR          from '../../adp_kit/components/ButtonR.svelte'

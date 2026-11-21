@@ -1,24 +1,18 @@
 
 <script lang="ts">
-    import { onMount, onDestroy }      from 'svelte'
-    import { browser_params, user, async_get, async_post, get_cookie_value, initialize_user } from '../../state.svelte.ts';
+    import { onMount, onDestroy }   from 'svelte'
+    import { user, async_post,  }   from '../../state.svelte.ts';
 
     import { CE_SRC } from "../../../lib/app_engine.ts";
-    import { PRIORITY_ARRAY_LIST, OBJECT_PROPERTIES } from "../../../lib/bacnet_lists.ts"    
+    import { OBJECT_PROPERTIES } from "../../../lib/bacnet_lists.ts"    
 
     import DataTableEdit    from "../../adp_kit/components/DataTableEdit.svelte"
-    import DataTable        from "../../adp_kit/components/DataTable.svelte"
     import Modal            from "../../adp_kit/components/Modal.svelte"
     import ControlPanel     from "../../adp_kit/components/ControlPanel.svelte"
     
     import {
         ExpandAll  ,
         CollapseAll,        
-        Edit,
-        ConnectionSignal,
-        DataQualityDefinition,
-        FolderParent,
-        Run,
         SearchLocateMirror,
         DataBackup
     } from "carbon-icons-svelte"

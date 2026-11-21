@@ -1,4 +1,5 @@
 import asyncio
+from os import path
 
 #if sys.platform == 'win32':
 #    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy()) #otherwise create_subprocess_exec does not work on
@@ -14,6 +15,8 @@ from contextlib              import asynccontextmanager
 
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.cors import CORSMiddleware
+
+from fastapi.responses       import FileResponse
 
 #This more advanced, for future
 #from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -164,6 +167,12 @@ app = FastAPI(
 ) 
 
 
+if path.exists('./WEB-INF') :
+    app.mount( "/favicon",     StaticFiles(directory = "./WEB-INF/favicon"),     name = "favicon")      #Favicon
+    app.mount( "/icons",       StaticFiles(directory = "./WEB-INF/icons"),       name = "resources")    #Resources
+    app.mount( "/_app",        StaticFiles(directory = "./WEB-INF/_app"),        name = "app")          #app
+
+
 app.add_middleware(
     GZipMiddleware,
     minimum_size  = 1024 * 8,
@@ -175,10 +184,40 @@ class request_jsn(BaseModel): #for standart commands, update, delete record and 
     #user:    str = ''
     content: str = ''
 
-#app.mount( "/assets",    StaticFiles(directory = "./WEB-INF/assets"),    name = "assets")    #Svelte Static Resources, ex: bundle, files, pictures    
-#app.mount( "/favicon",   StaticFiles(directory = "./WEB-INF/favicon"),   name = "favicon")   #Favicon   
-#app.mount( "/resources", StaticFiles(directory = "./WEB-INF/resources"), name = "resources") #Resources   
 
+@app.get("/",           response_class=HTMLResponse)
+@app.get("/index.html", response_class=HTMLResponse)
+async def indx_file():
+    return  FileResponse('./WEB-INF/index.html')
+
+
+@app.get("/{document}", response_class=HTMLResponse)
+async def root_files(document):
+    if path.isfile(f'./WEB-INF/{document}'):
+        return  FileResponse(f'./WEB-INF/{document}')
+    elif path.isfile(f'./WEB-INF/{document}.html'):
+        return  FileResponse(f'./WEB-INF/{document}.html')
+    else:
+        print('Make Error Page')
+        return  FileResponse('./WEB-INF/index.html')
+
+
+@app.get("/{document1}/{document2}", response_class=HTMLResponse)
+async def root_files(document1, document2):
+    if path.isfile(f'./WEB-INF/{document1}/{document2}.html'):
+        return  FileResponse(f'./WEB-INF/{document1}/{document2}.html')
+    else:
+        return  FileResponse('./WEB-INF/index.html')    #make error page later
+
+
+@app.get("/{document1}/{document2}/{document3}", response_class=HTMLResponse)
+async def root_files(document1, document2, document3):
+    if path.isfile(f'./WEB-INF/{document1}/{document2}/{document3}.html'):
+        return  FileResponse(f'./WEB-INF/{document1}/{document2}/{document3}.html')
+    else:
+        print('Make Error Page')
+        return  FileResponse('./WEB-INF/index.html')    #make error page later
+        
 
 def check_auth(sessionid):
     global user_cache

@@ -13,10 +13,9 @@ Build around main fundamentals:
 1. Linux only support, Windows support coming soon.
 2. BACnet And MQTT - read only, write mode coming soon.
 
-
 Dependencies for Python:
 ```
-  python312+
+  python312 +
   uvicorn
   uvloop #optional
   fastapi

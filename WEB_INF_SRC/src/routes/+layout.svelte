@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount }      from 'svelte';
 
-    import { browser_params, user, async_get, async_post, get_cookie_value, initialize_user, set_navigation } from './state.svelte.ts';
+    import { browser_params, user, async_post, get_cookie_value, initialize_user, set_navigation } from './state.svelte.ts';
 
     import Navigation from './adp_kit/layout/Navigation.svelte';
     import Header     from './adp_kit/layout/Header.svelte';

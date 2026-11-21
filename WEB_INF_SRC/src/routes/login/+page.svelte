@@ -1,10 +1,7 @@
 
 <script lang="ts">
-    
-
     import { onMount } from "svelte"
-
-    import { browser_params, initialize_user, async_post, set_navigation, user } from '../state.svelte.ts'
+    import { initialize_user, async_post } from '../state.svelte.ts'
 
 
     import {

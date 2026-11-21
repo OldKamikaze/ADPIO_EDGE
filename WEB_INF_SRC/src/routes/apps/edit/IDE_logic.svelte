@@ -1,8 +1,7 @@
 <script  lang="ts">
     import { onMount, onDestroy }      from 'svelte'
-    import { browser_params, user, async_get, async_post, get_cookie_value, initialize_user, popup_add, sleep, blocks_to_tree, datapoints_to_tree } from '../../state.svelte.ts'
-    import { build_app, run_app, stop_app, DATAPOINTS_PROPERTIES, UNITS_LIST} from '../../../lib/app_engine.ts'
-    import { version, dev } from '$app/env'
+    import { user, async_post, popup_add, blocks_to_tree, datapoints_to_tree } from '../../state.svelte.ts'
+    import { dev } from '$app/env'
 
     import {
         Add,

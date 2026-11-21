@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount }      from 'svelte'
     import { page }         from '$app/state'
-    import { browser_params, user, async_get, async_post, get_cookie_value, initialize_user, popup_add, sleep, set_navigation } from '../../state.svelte.ts'
+    import { user, async_post, popup_add, sleep, set_navigation } from '../../state.svelte.ts'
     import { build_app, run_app, stop_app } from '../../../lib/app_engine.ts'
 
     import {
@@ -146,23 +146,3 @@
 
 <style></style>
 
-
-
-<!--
-{#if application === undefined}
-    <div>LOADING...</div>
-{:else}
-    {#key application.status} 
-        {#if      view === VIEW_DATA}
-            <IDE_datapoints application={application} />
-        {:else if view === VIEW_GRAPH}
-            <IDE_graphics   application={application} />
-        {:else if view === VIEW_PROG}
-            <IDE_logic      application={application} />
-        {:else}
-            <div>ERROR: VIEW DOES NOT EXIST ({view})...</div>
-        {/if}
-
-    {/key}
-{/if}
--->
